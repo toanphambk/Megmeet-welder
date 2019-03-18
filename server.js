@@ -13,7 +13,8 @@ server.on('message', (msg, rinfo) => {
   var machineIP="";
   // dataProcessing(msg,rinfo)
   // server.close()
-  console.log(rinfo b);
+  // console.log(msg.toString("hex"));
+  console.log(rinfo.address);
 });
 
 server.bind(3005,"192.168.0.16",()=>{
