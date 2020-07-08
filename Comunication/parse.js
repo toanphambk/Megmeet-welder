@@ -1,8 +1,6 @@
 const STARTBYTE = "7f7f7f7f";
 const ENDBYTE = "7e7e7e7e";;
 
-msg.toString('hex')
-
 function weldingDataParse(package) {
   _package = package.toString('hex')
   var data = {
@@ -114,7 +112,7 @@ function CANParse(data) {
       CANdata.Operating_Status = parseInt(data.substr(bytePos(14), bytenumber(2)), 16);
       break;
   }
-  return CANObject;
+  return CANdata;
 }
 
 

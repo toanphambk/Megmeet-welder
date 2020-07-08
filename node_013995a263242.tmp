@@ -11,10 +11,12 @@ server.on('error', (err) => {
 });
 
 server.on('message', (msg, rinfo) => {
+  console.log(msg);
   console.log(weldingDataParse(msg));
+  console.log(rinfo.address);
 });
 
-server.bind(3005, "192.168.0.198", () => {
+server.bind(3005, "192.168.0.16", () => {
   console.log('server is listen on port 3005');
 });
 
