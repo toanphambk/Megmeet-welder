@@ -1,6 +1,7 @@
-var {dataProcessing}=require(__dirname+"/database/function/function.js")
-var {command}=require(__dirname+"/Comunication/frame_render.js")
+
 var dgram = require('dgram');
+const {weldingDataParse} = require('./Comunication/parse');
+
 var server = dgram.createSocket('udp4');
 
 
@@ -11,12 +12,52 @@ server.on('error', (err) => {
 
 server.on('message', (msg, rinfo) => {
   var machineIP="";
-  // dataProcessing(msg,rinfo)
-  // server.close()
-  // console.log(msg.toString("hex"));
+  console.log(weldingDataParse(msg));
+  server.close()
   console.log(rinfo.address);
 });
 
 server.bind(3005,"192.168.0.16",()=>{
   console.log('server is listen on port 3005');
 });
+
+
+{
+ "sendDirection": "Welder upload",
+ "typeOfData": "Volt and Ampe data",
+ "frameLength": 85,
+ "dataLength": 38,
+ "MACAddress": "343044363343304139453342343044363343304139453343",
+ "bytecheck": "0000",
+ "endByte": "7e7e7e7e",
+ "startByte": "7f7f7f7f",
+ "CAN": [
+ {
+ "CANstdId": "14070000",
+ "CANextId": "00000000",
+ "CANide": "00",
+ "CANrtr": "00",
+ "CANdlc": "08",
+ "CANdata": {
+ "Frame": "0x40: State control",
+ "Specification_Number": 255,
+ "Alarm_information": 0,
+ "Given_current": 215,
+ "Given_voltage": 28.5
+ }
+ ,
+ {
+ "CANstdId": "14070000",
+ "CANextId": "00000000",
+ "CANide": "00",
+ "CANrtr": "00",
+ "CANdlc": "08",
+ "CANdata": {
+ "Frame": "0x41: State control",
+ "Specification_Number": 255,
+ "Wire_feeding_speed": 0,
+ "Actual_current": 0,
+ "ACtual_Voltage": 0
+ }
+ ]
+}
