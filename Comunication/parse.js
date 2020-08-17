@@ -4,10 +4,8 @@ const ENDBYTE = "7e7e7e7e";;
 function weldingDataParse(package) {
   _package = package.toString('hex')
   var data = {
-    dataLength: 0,
-    typeOfData: "",
     MACAddress: "",
-    CAN: new Array(0)
+    CAN: new Object();
   }
   try {
     if (_package.substr(bytePos(40), bytenumber(2)) == "1300") {
@@ -21,18 +19,17 @@ function weldingDataParse(package) {
     if (!_package.substr(bytePos(42 + data.dataLength + 2), bytenumber(4)) == ENDBYTE && _package.substr(bytePos(1), bytenumber(4)) == STARTBYTE) {
       throw "data packet not fit frame"
     } else {
-      if (_package.substr(bytePos(6), bytenumber(4)) == "00000000") {
-        data.typeOfData = "Volt and Ampe data";
-      } else if (_package.substr(bytePos(5), bytenumber(1)) == "01000000") {
-        data.typeOfData = "ID card data";
-      }
+ 
       CANFrame = _package.substr(bytePos(42), bytenumber(data.dataLength));
       data.MACAddress = _package.substr(bytePos(16), bytenumber(24));
       if (data.dataLength == 19) {
-        data.CAN.push(CANParse(CANFrame));
+        data.CAN=(CANParse(CANFrame));
       } else if (data.dataLength == 38) {
-        data.CAN.push(CANParse(CANFrame));
-        data.CAN.push(CANParse(CANFrame.substr(bytePos(20), bytenumber(38))));
+        data.CAN={
+          ...CANParse(CANFrame),
+          ...CANParse(CANFrame.substr(bytePos(20), bytenumber(38)))
+        }
+
       }
       return data;
     }
@@ -56,18 +53,14 @@ function CANParse(data) {
 
   switch (FrameNumber) {
     case "40":
-      CANdata.Frame = "0x40: Set State control";
-      CANdata.Specification_Number = parseInt(data.substr(bytePos(13), bytenumber(1)), 16);
-      CANdata.Alarm_information = parseInt(data.substr(bytePos(14), bytenumber(2)), 16);
-      CANdata.Given_current = parseInt(data.substr(bytePos(16), bytenumber(2)), 16);
-      CANdata.Given_voltage = parseInt(data.substr(bytePos(18), bytenumber(2)), 16) / 10;
+      CANdata.alarm_information = parseInt(data.substr(bytePos(14), bytenumber(2)), 16);
+      CANdata.given_current = parseInt(data.substr(bytePos(16), bytenumber(2)), 16);
+      CANdata.given_voltage = parseInt(data.substr(bytePos(18), bytenumber(2)), 16) / 10;
       break;
     case "41":
-      CANdata.Frame = "0x41: Actual State control";
-      CANdata.Specification_Number = parseInt(data.substr(bytePos(13), bytenumber(1)), 16);
-      CANdata.Wire_feeding_speed = parseInt(data.substr(bytePos(14), bytenumber(2)), 16) / 10;
-      CANdata.Actual_current = parseInt(data.substr(bytePos(16), bytenumber(2)), 16);
-      CANdata.ACtual_Voltage = parseInt(data.substr(bytePos(18), bytenumber(2)), 16) / 10;
+      CANdata.wire_feeding_speed = parseInt(data.substr(bytePos(14), bytenumber(2)), 16) / 10;
+      CANdata.actual_current = parseInt(data.substr(bytePos(16), bytenumber(2)), 16);
+      CANdata.actual_Voltage = parseInt(data.substr(bytePos(18), bytenumber(2)), 16) / 10;
       break;
     case "30":
       CANdata.Frame = "0x31: Setting specification ";

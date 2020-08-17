@@ -9,9 +9,15 @@ server.on('error', (err) => {
   console.log(`server error:\n ${err.stack}`);
   server.close();
 });
-
+var a = new Array()
 server.on('message', (msg, rinfo) => {
-  console.log(weldingDataParse(msg));
+  let data = weldingDataParse(msg)
+  if(!a.includes(data.MACAddress)){
+    a.push(data.MACAddress)
+    console.log(a);
+    
+  }
+  
 });
 
 server.bind(3005, "192.168.0.198", () => {
